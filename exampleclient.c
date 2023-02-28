@@ -29,8 +29,8 @@ int main(int argc, char **argv)
  if (s <0) {printf("socket call failed0); exit(-1);}
  memset(&channel, 0, sizeof(channel));
  channel.sin_family= AF_INET;
- memcpy(&channel.sin_addr.s_addr, h->h_addr, h->h  length);
- channel.sin_port= htons(SERVER  PORT);
+ memcpy(&channel.sin_addr.s_addr, h->h_addr, h->h_length);
+ channel.sin_port= htons(SERVER_PORT);
  c = connect(s, (struct sockaddr *) &channel, sizeof(channel));
  if (c < 0) {printf("connect failed0); exit(-1);}
 
