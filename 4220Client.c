@@ -14,7 +14,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-#define SERVER_PORT 8080			     // arbitrary, but client & server must agree 
+#define SERVER_PORT 4220			     // arbitrary, but client & server must agree 
 #define BUF_SIZE 4096				     // block transfer size
 
 int main(int argc, char *argv)
