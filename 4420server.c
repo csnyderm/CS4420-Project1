@@ -14,7 +14,7 @@
 
 int main(void){
 
-    char buffer[BUF_SIZE];
+    char receive_buf[BUF_SIZE], send_buf[BUF_SIZE];
     struct sockaddr_in local_addr;   /* addr structs */
     int socknet, bindnet, listener, bouncer;            /* socket and bind vars */
     bool open_socket = 1;
@@ -50,25 +50,20 @@ int main(void){
             exit(-1);
         }
 
-        read(bouncer, buffer, BUF_SIZE);
-
-        /*
-            Skeleton almost done, to do: Set up the send-back plan.
-            Do we want it to send a specific message back by default?
-            Maybe edit the string in some way?
+        /* 
+        We will read in a string, prepend it with the message,
+        then send the first 4000 characters of the message back
         */
+       
+        read(bouncer, receive_buf, BUF_SIZE);
+        strcpy(send_buf, "Message received. You sent: ");
+        strncat(send_buf, receive_buf, 4000);
 
-       // Add read in here
+        write(socknet, send_buf, BUF_SIZE);
 
-       while(1) {
-            // add the writeback here
 
-       }
-
-       close(bouncer);
+       close(bouncer); /* Remember to close */
 
     }
-
-
 
 }
