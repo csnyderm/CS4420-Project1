@@ -29,7 +29,7 @@ int main(int argc, char *argv)
 	//collect hostname
 	if (argc != 3) {printf("Usage: client server-name file-name"); exit(-1);}
 	h = gethostbyname(argv);			     // look up host’s IP address
-	if (!h) {printf("gethostbyname failed to locate %s", argv[1]); exit(-1;}
+	if (!h) {printf("gethostbyname failed to locate %d", argv[1]); exit(-1);} // GCC was throwing an error, fixed line, may need additional review
 
 	//create socket and connect to the server
 	sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
