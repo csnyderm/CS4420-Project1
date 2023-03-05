@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>         /* sockaddr_in */
 #include <netdb.h>
+#include <unistd.h>
 
 #define SERVER_PORT 4220        /* Opening the port on 4220 as it has no 
                                    assignments that is standardized */
@@ -17,11 +18,11 @@ int main(void){
     char receive_buf[BUF_SIZE], send_buf[BUF_SIZE];
     struct sockaddr_in local_addr;   /* addr structs */
     int socknet, bindnet, listener, bouncer;            /* socket and bind vars */
-    bool open_socket = 1;
+    int open_socket = 1; /* bool */
 
     socknet                     = socket(AF_INET, SOCK_STREAM, 0);
 
-    if(sock_net < 0){
+    if(socknet < 0){
         printf("Hey, we're getting an error here!");
         exit(-1);
     }
