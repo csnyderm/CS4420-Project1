@@ -14,43 +14,64 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-#define SERVER_PORT 4220			     // arbitrary, but client & server must agree 
+#define SERVER_PORT "4220"			     // arbitrary, but client & server must agree 
 #define BUF_SIZE 4096				     // block transfer size
 
-int main(int argc, char *argv)
+int main(void)
 {
 	//variables
-	int c, sock, bytes, readSize;
+	int c, sock, bytes_sent, readSize, status;
 	char msg[BUF_SIZE];				     // buffer for msg
 	char returnMsg[BUF_SIZE];
-	struct hostent *h;				     // info about server
-	struct sockaddr_in channel;			     // holds IP address
+	struct addrinfo hints;
+	struct addrinfo *servinfo;
+	
+	//set hints for getaddrinfo
+	memset(&hints, 0, sizeof hints); // make sure the struct is empty
+	hints.ai_family = AF_UNSPEC;     // don't care IPv4 or IPv6
+	hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
+	hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
 
 	//collect hostname
-	if (argc != 3) {printf("Usage: client server-name file-name"); exit(-1);}
-	h = gethostbyname(argv);			     // look up host’s IP address
-	if (!h) {printf("gethostbyname failed to locate %d", argv[1]); exit(-1);} // GCC was throwing an error, fixed line, may need additional review
+	if ((status = getaddrinfo(NULL, SERVER_PORT, &hints, &servinfo)) != 0) {
+		fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
+		exit(1);
+	}
+	//if (!h) {printf("gethostbyname failed to locate %d", argv[1]); exit(-1);} // GCC was throwing an error, fixed line, may need additional review
 
 	//create socket and connect to the server
-	sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (sock <0) {printf("socket call failed"); exit(-1);}
+	sock = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol);
+	if (sock < 0) {printf("socket call failed"); exit(-1);}
+	
+	/*
 	memset(&channel, 0, sizeof(channel));
 	channel.sin_family= AF_INET;
 	memcpy(&channel.sin_addr.s_addr, h->h_addr, h->h_length);
 	channel.sin_port= htons(SERVER_PORT);
 	c = connect(sock, (struct sockaddr *) &channel, sizeof(channel));
 	if (c < 0) {printf("connect failed"); exit(-1);}
+	*/
+	
+	//bind
+	//bind(sock, servinfo->ai_addr, servinfo->ai_addrlen);
+	//if (bind < 0) {printf("bind call failed"); exit(-1);}
+	
+	//connect
+	c = connect(sock, servinfo->ai_addr, servinfo->ai_addrlen);
+	if (c < 0) {printf("Connect call failed"); exit(-1);}
 
 	//Connection is now established. take input from user
 	printf("\nInput message to be sent: ");
 	scanf("%s", msg);
 	
 	//write out to server
-	write(sock, msg, strlen(msg));
-	printf("\nMessage successfully sent.");
+	//write(sock, msg, strlen(msg));
+	bytes_sent = send(sock, msg, strlen(msg), 0);
+	printf("\nMessage of %d bytes sent.", bytes_sent);
+	printf("\nMessage total length: %d bytes", strlen(msg));
 	
 	//read back from server
-	readSize = read(sock, returnMsg, BUF_SIZE);
+	readSize = recv(sock, returnMsg, BUF_SIZE, 0);
 	write(1, returnMsg, readSize);
 	printf("\n\n%s", returnMsg);
 
@@ -65,4 +86,8 @@ int main(int argc, char *argv)
 		 write(1, buf, bytes);			     // write to standard output
 	}
 	*/
+	
+	//close pointers and free memory
+	close(sock);
+	freeaddrinfo(servinfo);
 }
