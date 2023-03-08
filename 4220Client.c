@@ -62,17 +62,24 @@ int main(void)
 
 	//Connection is now established. take input from user
 	printf("\nInput message to be sent: ");
-	scanf("%s", msg);
+	fgets(msg, BUF_SIZE, stdin);
 	
 	//write out to server
 	//write(sock, msg, strlen(msg));
 	bytes_sent = send(sock, msg, strlen(msg), 0);
 	printf("\nMessage of %d bytes sent.", bytes_sent);
-	printf("\nMessage total length: %d bytes", strlen(msg));
+	printf("\nMessage total length: %ld bytes", strlen(msg));
 	
 	//read back from server
 	readSize = recv(sock, returnMsg, BUF_SIZE, 0);
-	write(1, returnMsg, readSize);
+
+	/*
+		Why is this write call here? Not sure if there's a purpose so leaving it
+		It was causing some artifacting returns. Can send screenshots if need be
+		For now it's commented out and everything works.
+	*/ 
+	//write(1, returnMsg, readSize);
+
 	printf("\n\n%s", returnMsg);
 
 	/*
