@@ -43,6 +43,13 @@ int main(void){
         return 1;
     }
 
+    /* 
+        Getaddrinfo pulls one or more addrinfo structures. Why? From man page on when it can pull multiple:
+
+        the network host is multihomed, accessible over multiple protocols (e.g., both
+        AF_INET and AF_INET6); or the same service is available from multiple socket types
+     */
+
     /* Now we check each possible results and bind to our first that can succeed */
     for(possible = servinfo; possible != NULL; possible = possible->ai_next){
 
@@ -111,7 +118,7 @@ int main(void){
         */
         // Only need to receive from the connected
         recverr = recv(sock_connect, receive_buf, BUF_SIZE, 0);
-        fprintf(stderr, "Received %s\n", receive_buf); // Error checking
+        //fprintf(stderr, "Received %s\n", receive_buf); // Error checking
 
         /* 
         We will read in a string, prepend it with the message,
@@ -121,7 +128,7 @@ int main(void){
         strcpy(send_buf, "Message received. You sent: ");
         strncat(send_buf, receive_buf, 4000);
 
-        fprintf(stderr, "Sending %s\n", send_buf); // Error checking
+        //fprintf(stderr, "Sending %s\n", send_buf); // Error checking
 
         send(sock_connect, send_buf, BUF_SIZE, 0);
 
@@ -129,5 +136,7 @@ int main(void){
         close(sock_connect);
 
     }
+
+    return 0;
 
 }

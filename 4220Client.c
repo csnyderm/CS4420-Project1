@@ -97,4 +97,6 @@ int main(void)
 	//close pointers and free memory
 	close(sock);
 	freeaddrinfo(servinfo);
+
+	return 0;
 }
