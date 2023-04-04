@@ -24,10 +24,13 @@ int main(void){
     struct addrinfo hints, *servinfo, *possible;
     struct sockaddr_storage connector_addr; // Connector's addr info
     socklen_t sin_size; // Size of the connector's address
-    int addrerror, binding, listener, recverr, senderr;
+    int addrerror, binding, listener, senderr;
+    int /*, recverr;*/ // No longer need it for this
     int reuse_port = 1;
 
     char receive_buf[BUF_SIZE], send_buf[BUF_SIZE];
+    
+    FILE *fp;
 
 
     /* Set up our family to be IPV4, use the TCP Stream socket, and passively use our own IP */
@@ -120,17 +123,25 @@ int main(void){
         /*
             To do: Read in the file in binary, open a new file, save it. Send a message of completion back to the client. Loop to make sure we get all the bytes out of the receiver.
         */
-        // Only need to receive from the connected
-        recverr = recv(sock_connect, receive_buf, BUF_SIZE, 0);
+        
+        receiving_file = fopen('fromClient.txt', 'wb');
+        
+        while (recv(sock_connect, receive_buf, BUF_SIZE, 0))
+        {
+            // Write to the receiving file the information from the receiving buffer as long as we continue to receive more data.
+            fwrite(receive_buf, sizeof(char), BUF_SIZE, receiving_file);
+        }
+        
+        // Hold onto as an example.
+        /*recverr = recv(sock_connect, receive_buf, BUF_SIZE, 0);*/
+        
         //fprintf(stderr, "Received %s\n", receive_buf); // Error checking
 
         /* 
-        We will read in a string, prepend it with the message,
-        then send the first 4000 characters of the message back
+            Now that we have received the file, we'll let the client know.
         */
 
-        strcpy(send_buf, "Message received. You sent: ");
-        strncat(send_buf, receive_buf, 4000);
+        strcpy(send_buf, "Finished receiving the file!");
 
         //fprintf(stderr, "Sending %s\n", send_buf); // Error checking
 
