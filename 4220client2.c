@@ -75,15 +75,16 @@ int main(void)
   //read in file
   FILE* inf;
   char* line;
-  inf = fopen("test.txt", "r");
+  inf = fopen("test.txt", "rb");
  
   //check for errors
-  if (inf == NULL) {fprintf(stderr, "\nError to open the file\n"); exit(1);}
+  if (inf == NULL) {fprintf(stderr, "\nError opening the file\n"); exit(1);}
  
   //read in the file and send it over line by line
-  while (fread(&line, strlen(line), 1, inf))
-    send(sock, line, strlen(line), 0);
-  
+  while (fread(&line, strlen(line), 1, inf)){
+	send(sock, line, strlen(line), 0);
+  }
+    
   fclose(inf);
   
 	
