@@ -15,7 +15,7 @@
 #include <netdb.h>
 
 #define SERVER_PORT "4220"			     // arbitrary, but client & server must agree 
-#define BUF_SIZE 4096				     // block transfer size
+#define BUF_SIZE 256				     // block transfer size
 
 int main(void)
 {
@@ -74,16 +74,19 @@ int main(void)
   
   //read in file
   FILE* inf;
-  char* line;
-  inf = fopen("test.txt", "rb");
+  inf = fopen("text.txt", "r");
+  fprintf(stderr, "Opened file");
  
   //check for errors
   if (inf == NULL) {fprintf(stderr, "\nError opening the file\n"); exit(1);}
  
   //read in the file and send it over line by line
-  while (fread(&line, strlen(line), 1, inf)){
-	send(sock, line, strlen(line), 0);
+  while (fgets(msg, sizeof msg, inf)){
+	fprintf(stderr, "Sending: %s\n", msg);
+	send(sock, msg, strlen(msg), 0);
   }
+
+  fprintf(stderr, "Jobs done");
     
   fclose(inf);
   

@@ -12,10 +12,11 @@
 #include <netinet/in.h>         /* sockaddr_in */
 #include <netdb.h>
 #include <unistd.h>
+#include <poll.h>
 
 #define SERVER_PORT "4220"        /* Opening the port on 4220 as it has no 
                                    assignments that is standardized */
-#define BUF_SIZE 4096           /* Block transfer size */
+#define BUF_SIZE 256          /* Block transfer size */
 #define QUEUE_SIZE 10           /* Max number of pending connections, we'll do 10 just to be safe */
 
 int main(void){
@@ -124,13 +125,33 @@ int main(void){
             To do: Read in the file in binary, open a new file, save it. Send a message of completion back to the client. Loop to make sure we get all the bytes out of the receiver.
         */
         
-        receiving_file = fopen("fromClient.txt", "wb");
+        receiving_file = fopen("fromClient.txt", "w");
+
+        struct pollfd pfds[1]; // More if you want to monitor more
+
+        pfds[0].fd = sock_connect;          // Standard input
+        pfds[0].events = POLLIN; // Tell me when ready to read
+
+        int num_events = poll(pfds, 1, 2500); // 2.5 second timeout
         
-        while (recv(sock_connect, receive_buf, BUF_SIZE, 0))
+        while (pfds[0].revents & POLLIN)
         {
+            fprintf(stderr, "Ready? %d\n", pfds[0].revents & POLLIN);
+            (recv(sock_connect, receive_buf, BUF_SIZE, 0));
             // Write to the receiving file the information from the receiving buffer as long as we continue to receive more data.
-            fwrite(receive_buf, sizeof(char), BUF_SIZE, receiving_file);
+            fputs(receive_buf, receiving_file);
+            fprintf(stderr, "Received %s\n", receive_buf);
         }
+
+        fprintf(stderr, "Jobs done");
+        fclose(receiving_file);
+
+        /*do{
+
+            fprintf(stderr, "Received %s\n", receive_buf);
+            recv(sock_connect, receive_buf, BUF_SIZE, 0);
+            // Write to the receiving file the information from the receiving buffer as long as we continue to receive more data.
+        } while (fwrite(receive_buf, sizeof(char), BUF_SIZE, receiving_file));*/
         
         // Hold onto as an example.
         /*recverr = recv(sock_connect, receive_buf, BUF_SIZE, 0);*/
