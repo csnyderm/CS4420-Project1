@@ -1,0 +1,5 @@
+This is a text file to be read in.
+
+There are a few lines of text.
+
+This will test the server and client for project 2.
