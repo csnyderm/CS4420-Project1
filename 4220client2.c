@@ -15,7 +15,7 @@
 #include <netdb.h>
 
 #define SERVER_PORT "4220"			     // arbitrary, but client & server must agree 
-#define BUF_SIZE 256				     // block transfer size
+#define BUF_SIZE 4096				     // block transfer size
 
 int main(void)
 {

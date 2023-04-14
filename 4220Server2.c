@@ -16,7 +16,7 @@
 
 #define SERVER_PORT "4220"        /* Opening the port on 4220 as it has no 
                                    assignments that is standardized */
-#define BUF_SIZE 256          /* Block transfer size */
+#define BUF_SIZE 4096          /* Block transfer size */
 #define QUEUE_SIZE 10           /* Max number of pending connections, we'll do 10 just to be safe */
 
 int main(void){
@@ -127,7 +127,7 @@ int main(void){
         
         receiving_file = fopen("fromClient.txt", "w");
 
-        struct pollfd pfds[1]; // More if you want to monitor more
+        /*struct pollfd pfds[1]; // More if you want to monitor more
 
         pfds[0].fd = sock_connect;          // Standard input
         pfds[0].events = POLLIN; // Tell me when ready to read
@@ -141,17 +141,22 @@ int main(void){
             // Write to the receiving file the information from the receiving buffer as long as we continue to receive more data.
             fputs(receive_buf, receiving_file);
             fprintf(stderr, "Received %s\n", receive_buf);
+        }*/
+
+        while(recv(sock_connect, receive_buf, BUF_SIZE, 0)){
+
+            fprintf(stderr, "Received %s\n", receive_buf);
+            //fwrite(receive_buf, sizeof(char), BUF_SIZE, receiving_file);
+            fputs(receive_buf, receiving_file);
+            fprintf(stderr, "Received %s\n", receive_buf);
+            
+            // Write to the receiving file the information from the receiving buffer as long as we continue to receive more data.
         }
 
         fprintf(stderr, "Jobs done");
         fclose(receiving_file);
 
-        /*do{
-
-            fprintf(stderr, "Received %s\n", receive_buf);
-            recv(sock_connect, receive_buf, BUF_SIZE, 0);
-            // Write to the receiving file the information from the receiving buffer as long as we continue to receive more data.
-        } while (fwrite(receive_buf, sizeof(char), BUF_SIZE, receiving_file));*/
+        
         
         // Hold onto as an example.
         /*recverr = recv(sock_connect, receive_buf, BUF_SIZE, 0);*/
@@ -162,11 +167,11 @@ int main(void){
             Now that we have received the file, we'll let the client know.
         */
 
-        strcpy(send_buf, "Finished receiving the file!");
+        /*strcpy(send_buf, "Finished receiving the file!");
 
         //fprintf(stderr, "Sending %s\n", send_buf); // Error checking
 
-        send(sock_connect, send_buf, BUF_SIZE, 0);
+        send(sock_connect, send_buf, BUF_SIZE, 0);*/
 
         // Close our socket for the connection
         close(sock_connect);
