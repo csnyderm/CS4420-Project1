@@ -92,7 +92,7 @@ int main(void)
   
 	
 	//read back from server
-	readSize = recv(sock, returnMsg, BUF_SIZE, 0);
+	//readSize = recv(sock, returnMsg, BUF_SIZE, 0);
 
 	/*
 		Why is this write call here? Not sure if there's a purpose so leaving it
@@ -101,7 +101,7 @@ int main(void)
 	*/ 
 	//write(1, returnMsg, readSize);
 
-	printf("\n\n%s", returnMsg);
+	//printf("\n\n%s", returnMsg);
 
 	/*
 	// Connection is now established. Send file name including 0 byte at end.
