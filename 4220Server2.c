@@ -16,7 +16,7 @@
 
 #define SERVER_PORT "4220"        /* Opening the port on 4220 as it has no 
                                    assignments that is standardized */
-#define BUF_SIZE 4096          /* Block transfer size */
+#define BUF_SIZE 4096         /* Block transfer size */
 #define QUEUE_SIZE 10           /* Max number of pending connections, we'll do 10 just to be safe */
 
 int main(void){
@@ -143,14 +143,33 @@ int main(void){
             fprintf(stderr, "Received %s\n", receive_buf);
         }*/
 
-        while(recv(sock_connect, receive_buf, BUF_SIZE, 0)){
+        /*while(recv(sock_connect, receive_buf, BUF_SIZE, 0)){
 
-            fprintf(stderr, "Received %s\n", receive_buf);
             //fwrite(receive_buf, sizeof(char), BUF_SIZE, receiving_file);
             fputs(receive_buf, receiving_file);
-            fprintf(stderr, "Received %s\n", receive_buf);
+            fprintf(stderr, "Received: %s\n", receive_buf);
             
             // Write to the receiving file the information from the receiving buffer as long as we continue to receive more data.
+        }*/
+
+        int count, total = 0;
+
+        while ((count = recv(sock_connect, &receive_buf[total], sizeof receive_buf - total, 0)) > 0)
+        {
+            total += count;
+
+            if ((total >= 4000) || (total + count > BUF_SIZE))
+            {
+                receive_buf[total] = 0;
+                fputs(receive_buf, receiving_file);
+                memset(&receive_buf[0], 0, sizeof receive_buf);
+
+                count, total = 0;
+            }
+        }
+        if (count <= 0)
+        {
+            fputs(receive_buf, receiving_file);
         }
 
         fprintf(stderr, "Jobs done");
