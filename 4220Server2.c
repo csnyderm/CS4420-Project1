@@ -122,35 +122,11 @@ int main(void){
         */
       
         /*
-            To do: Read in the file in binary, open a new file, save it. Send a message of completion back to the client. Loop to make sure we get all the bytes out of the receiver.
+            We will open the file first, then attempt to read in until the buffer will become full. If it would become full, we output the buffer to the file, and then clear the buffer and
+            begin the loop over again.
         */
         
         receiving_file = fopen("fromClient.txt", "w");
-
-        /*struct pollfd pfds[1]; // More if you want to monitor more
-
-        pfds[0].fd = sock_connect;          // Standard input
-        pfds[0].events = POLLIN; // Tell me when ready to read
-
-        int num_events = poll(pfds, 1, 2500); // 2.5 second timeout
-        
-        while (pfds[0].revents & POLLIN)
-        {
-            fprintf(stderr, "Ready? %d\n", pfds[0].revents & POLLIN);
-            (recv(sock_connect, receive_buf, BUF_SIZE, 0));
-            // Write to the receiving file the information from the receiving buffer as long as we continue to receive more data.
-            fputs(receive_buf, receiving_file);
-            fprintf(stderr, "Received %s\n", receive_buf);
-        }*/
-
-        /*while(recv(sock_connect, receive_buf, BUF_SIZE, 0)){
-
-            //fwrite(receive_buf, sizeof(char), BUF_SIZE, receiving_file);
-            fputs(receive_buf, receiving_file);
-            fprintf(stderr, "Received: %s\n", receive_buf);
-            
-            // Write to the receiving file the information from the receiving buffer as long as we continue to receive more data.
-        }*/
 
         int count, total = 0;
 
@@ -167,30 +143,16 @@ int main(void){
                 count, total = 0;
             }
         }
+
+        // Regardless of whether we have an error or clean exit, we can simply fputs the buffer to the file and move on for now.
         if (count <= 0)
         {
             fputs(receive_buf, receiving_file);
         }
 
+        // Let us know that the job finished and close our file.
         fprintf(stderr, "Jobs done");
         fclose(receiving_file);
-
-        
-        
-        // Hold onto as an example.
-        /*recverr = recv(sock_connect, receive_buf, BUF_SIZE, 0);*/
-        
-        //fprintf(stderr, "Received %s\n", receive_buf); // Error checking
-
-        /* 
-            Now that we have received the file, we'll let the client know.
-        */
-
-        /*strcpy(send_buf, "Finished receiving the file!");
-
-        //fprintf(stderr, "Sending %s\n", send_buf); // Error checking
-
-        send(sock_connect, send_buf, BUF_SIZE, 0);*/
 
         // Close our socket for the connection
         close(sock_connect);
