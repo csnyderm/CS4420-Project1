@@ -113,7 +113,7 @@ int main(void){
             continue;
         }
 
-        printf("Server got a new connection! Waiting on their message now \n");
+        printf("Server got a new connection! Waiting on their file now \n");
 
         /*
             Note of learning from Beej:
@@ -151,8 +151,16 @@ int main(void){
         }
 
         // Let us know that the job finished and close our file.
-        fprintf(stderr, "Jobs done");
+        fprintf(stderr, "Job's done: Finished reading in the file.\n");
         fclose(receiving_file);
+
+        strcpy(send_buf, "The server has successfully received your file!"); // Copy the message into the buffer
+
+        //fprintf(stderr, "Sending %s\n", send_buf); // Error checking
+
+        // Let them know we got the file and make sure we're sending the right string
+        fprintf(stderr, "Sending to Client: %s\n\n", send_buf);
+        send(sock_connect, send_buf, BUF_SIZE, 0);
 
         // Close our socket for the connection
         close(sock_connect);

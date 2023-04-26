@@ -51,23 +51,26 @@ int main(void)
 	//read in file
 	FILE* inf;
 	inf = fopen("text.txt", "r");
-	fprintf(stderr, "Opened file");
+	fprintf(stderr, "Opening file... \n");
 	
 	//check for errors
-	if (inf == NULL) {fprintf(stderr, "\nError opening the file\n"); exit(1);}
+	if (inf == NULL) {fprintf(stderr, "Error opening the file\n"); exit(1);}
 	
 	//read in the file and send it over line by line
+	fprintf(stderr, "Beginning to send the file to the client...\n");
  	while (fgets(msg, sizeof msg, inf)){
-		fprintf(stderr, "Sending: %s\n", msg);
+		//fprintf(stderr, "Sending: %s\n", msg); // Error checking
 		send(sock, msg, strlen(msg), 0);
   	}
 
 	//let us know job finished and close the file
-  	fprintf(stderr, "Jobs done");
-    
+  	fprintf(stderr, "Job's done: Successfully transmitted the file. Waiting to receive confirmation.\n");
   	fclose(inf);
-  
-	
+
+	shutdown(sock, SHUT_WR); //shut down writing so that we can prevent recv from blocking on the server.
+
+	recv(sock, returnMsg, BUF_SIZE, 0);
+	fprintf(stderr, "From Server: %s\n", returnMsg); //confirmation means time to shutdown
 	
 	//close pointers and free memory
 	close(sock);
