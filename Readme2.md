@@ -3,8 +3,7 @@
 ## Introduction
 This project was completed by Cole Snyder and KC Livingston. We have neither given or received unauthorized assistance on this work.
 
-For the server, we chose to have a hard-coded file that it would write anything that was received. In order to ensure the file would be read correctly, we also chose a system where we would read until the buffer was full, clear the buffer and place the text so far into the file, and then continue reading as necessary. We also chose not to have the server return a message of confirmation
-to the client, primarily due to the difficulty in preventing the application from having recv block.
+For the server, we chose to have a hard-coded file that it would write anything that was received. In order to ensure the file would be read correctly, we also chose a system where we would read until the buffer was full, write the buffer into the file and then continue reading and writing as necessary. When we have finished reading in, the server sends a message of confirmation to the client.
 
 ## Usage
 In order to compile the files, simply run
