@@ -5,6 +5,8 @@ This project was completed by Cole Snyder and KC Livingston. We have neither giv
 
 For the server, we chose to have a hard-coded file that it would write anything that was received. In order to ensure the file would be read correctly, we also chose a system where we would read until the buffer was full, write the buffer into the file and then continue reading and writing as necessary. When we have finished reading in, the server sends a message of confirmation to the client.
 
+The client also has a hard-coded file, "test.txt" and requires no additional input. After exchanging the file, the server remains open for additional connections while the client exits.
+
 ## Usage
 In order to compile the files, simply run
 > gcc "filename of input" -o "filename you want"
